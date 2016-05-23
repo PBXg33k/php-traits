@@ -47,10 +47,10 @@ trait HydratableTrait
      * For each key, it looks for a setter and type.
      * If the value is an object, it initializes the object and assignes the initialized object.
      *
-     * @param  object $class class
+     * @param  object|array $class class
      * @return object
      */
-    protected function hydrateClass($class)
+    public function hydrateClass($class)
     {
         $reflection = new \ReflectionClass($this);
 
@@ -83,6 +83,9 @@ trait HydratableTrait
 
                     if (in_array($propertyClassName, $this->nonObjectTypes)) {
                         $this->setPropertyValue($propertyName, $itemValue, true);
+                    } elseif(interface_exists($propertyClassName)) {
+                        // We cannot instantiate an interface, so we skip it
+                        continue;
                     } else {
                         $object = new $propertyClassName($this->objectConstructorArguments);
 
@@ -176,7 +179,11 @@ trait HydratableTrait
         if (preg_match('~\@var[\s]+([A-Za-z0-9\\\\]+)~', $comment, $matches)) {
             if ($includeNamespaces) {
                 if ($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], $this->nonObjectTypes)) {
-                    return '\\' . $reflectionClass->getNamespaceName() . '\\' . $matches[1];
+                    if($reflectionClass->getNamespaceName()) {
+                        return sprintf('\%s\%s', $reflectionClass->getNamespaceName(), $matches[1]);
+                    } else {
+                        return sprintf('\%s', $matches[1]);
+                    }
                 } else {
                     return $matches[1];
                 }
