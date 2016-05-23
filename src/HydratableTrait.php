@@ -24,7 +24,7 @@ trait HydratableTrait
      *
      * @var array
      */
-    protected $nonObjectTypes = ['string', 'int', 'integer', 'bool', 'boolean', 'array', 'float'];
+    protected $nonObjectTypes = ['string', 'int', 'integer', 'bool', 'boolean', 'array', 'float', 'mixed', 'null'];
 
     /**
      * List of classes which will take string arguments in constructor
