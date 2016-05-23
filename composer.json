@@ -1,0 +1,17 @@
+{
+    "name": "pbxg33k/pbxg33k-traits",
+    "description": "A collection of traits to make life with PHP easier",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^5.3",
+        "crada/php-apidoc": "^1.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oguzhan Uysal",
+            "email": "development@oguzhanuysal.eu"
+        }
+    ],
+    "require": {}
+}
