@@ -52,7 +52,7 @@ trait HydratableTrait
      * @param  object $class class
      * @return object
      */
-    public function fromClass ($class)
+    public function fromClass($class)
     {
         $reflection = new \ReflectionClass($this);
 
@@ -64,8 +64,7 @@ trait HydratableTrait
             $propertyName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $itemKey))));
             $propertyName = (property_exists($this, $propertyName)) ? $propertyName :
                 (property_exists($this, lcfirst($propertyName)) ? lcfirst($propertyName) :
-                    preg_replace_callback('/([A-Z])/', function ($match)
-                    {
+                    preg_replace_callback('/([A-Z])/', function ($match) {
                         return strtolower('_' . $match[1]);
                     }, lcfirst($propertyName))
                 );
@@ -76,27 +75,31 @@ trait HydratableTrait
                 && $reflectionProperty = $reflection->getProperty($propertyName)
             ) {
                 // Get the expected property class from the property's DocBlock
-                if ($propertyClassName = $this->getClassFromDocComment($reflectionProperty->getDocComment(), true, $reflection)) {
+                if ($propertyClassName = $this->getClassFromDocComment($reflectionProperty->getDocComment(), true,
+                    $reflection)
+                ) {
 
                     // Set argument for constructor (if any), in case we're dealing with an object (IE: DateTime)
                     $this->objectConstructorArguments = (in_array($propertyClassName, $this->giveDataInConstructor))
-                        ? $itemValue : NULL;
+                        ? $itemValue : null;
 
                     if (in_array($propertyClassName, $this->nonObjectTypes)) {
-                        $this->setPropertyValue($propertyName, $itemValue, TRUE);
+                        $this->setPropertyValue($propertyName, $itemValue, true);
                     } else {
                         $object = new $propertyClassName($this->objectConstructorArguments);
 
                         // Check if $object has valid values
                         // IE: DateTime with a negative timestamp will cause a SQL Error
-                        $this->checkObjectForErrors($object, TRUE);
+                        $this->checkObjectForErrors($object, true);
 
                         if ($object) {
-                            if (method_exists($object, 'fromClass') && (is_array($itemValue) || is_object($itemValue))) {
+                            if (method_exists($object,
+                                    'fromClass') && (is_array($itemValue) || is_object($itemValue))
+                            ) {
                                 $object->fromClass($itemValue);
                             }
                             // We're done. Assign the result to the propery of $this
-                            $this->setPropertyValue($propertyName, $object, TRUE);
+                            $this->setPropertyValue($propertyName, $object, true);
                         }
                     }
                     unset($object);
@@ -117,19 +120,21 @@ trait HydratableTrait
      * @return Object
      * @throws \Exception if setting value has failed
      */
-    private function setPropertyValue ($key, $value, $override = false, $isCollection = false)
+    private function setPropertyValue($key, $value, $override = false, $isCollection = false)
     {
         // Replace empty strings with null
-        if ($value === "")
+        if ($value === "") {
             $value = null;
+        }
 
         // Convert key to method names
         $methodName = $this->getMethodName($key);
 
         if (!$override && method_exists($this, 'get' . $methodName)) {
             $currentValue = $this->{'get' . $methodName}();
-            if ($currentValue === $value)
+            if ($currentValue === $value) {
                 return $this;
+            }
         }
 
         $setMethod = ($isCollection) ? 'add' : 'set';
@@ -164,12 +169,12 @@ trait HydratableTrait
      *
      * @return bool|string
      */
-    private function getClassFromDocComment ($comment, $includeNamespaces = true, $reflectionClass = null)
+    private function getClassFromDocComment($comment, $includeNamespaces = true, $reflectionClass = null)
     {
         if (preg_match('~\@var[\s]+([A-Za-z0-9\\\\]+)~', $comment, $matches)) {
             if ($includeNamespaces) {
-                if($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], $this->nonObjectTypes)) {
-                    return '\\'.$reflectionClass->getNamespaceName() . '\\' . $matches[1];
+                if ($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], $this->nonObjectTypes)) {
+                    return '\\' . $reflectionClass->getNamespaceName() . '\\' . $matches[1];
                 } else {
                     return $matches[1];
                 }
@@ -178,7 +183,7 @@ trait HydratableTrait
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -188,17 +193,19 @@ trait HydratableTrait
      * @param bool $fix Fix errors
      * @return void
      */
-    private function checkObjectForErrors (&$object, $fix = false)
+    private function checkObjectForErrors(&$object, $fix = false)
     {
         if ($object instanceof \DateTime) {
             // The constructor (passed from the API) is NULL, indicating an empty value
             // PHP DateTime's default value is now()
-            if ($this->objectConstructorArguments == NULL) {
-                $object = NULL;
-            } else if (!$object->getTimestamp()) {
-                // DateTime has a negative or false value
-                if ($fix) {
-                    $object->setTimestamp(0);
+            if ($this->objectConstructorArguments == null) {
+                $object = null;
+            } else {
+                if (!$object->getTimestamp()) {
+                    // DateTime has a negative or false value
+                    if ($fix) {
+                        $object->setTimestamp(0);
+                    }
                 }
             }
         }
