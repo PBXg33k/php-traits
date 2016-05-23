@@ -10,6 +10,11 @@ namespace Pbxg33k\Traits;
 
 /**
  * Class HydratableTrait
+ *
+ * This trait allows you to hydrate a class/object by passing an array or stdObj and let it hydrate itself by
+ * calling either of the following methods:
+ *  - hydrateClass($rawData)
+ *
  * @package Pbxg33k\Traits
  */
 trait HydratableTrait
@@ -36,23 +41,16 @@ trait HydratableTrait
     protected $objectConstructorArguments;
 
     /**
-     * @var \ReflectionClass
-     */
-    protected $reflection;
-
-    /**
      * Converts a stdClass to models loaded in current context
      *
      * This method iterates over the passed $class
      * For each key, it looks for a setter and type.
      * If the value is an object, it initializes the object and assignes the initialized object.
      *
-     * @todo make this "draak van een functie" smaller by splitting up to methods en delegates.
-     *
      * @param  object $class class
      * @return object
      */
-    public function fromClass($class)
+    protected function hydrateClass($class)
     {
         $reflection = new \ReflectionClass($this);
 
@@ -93,8 +91,9 @@ trait HydratableTrait
                         $this->checkObjectForErrors($object, true);
 
                         if ($object) {
-                            if (method_exists($object,
-                                    'fromClass') && (is_array($itemValue) || is_object($itemValue))
+                            if (
+                                method_exists($object, 'hydrateClass') &&
+                                (is_array($itemValue) || is_object($itemValue))
                             ) {
                                 $object->fromClass($itemValue);
                             }
@@ -151,7 +150,10 @@ trait HydratableTrait
     }
 
     /**
-     * @param string $propertyKey
+     * Converts snake_case to CamelCase to convert property names to getters
+     *
+     * @param  string $propertyKey
+     * @return string
      */
     private function getMethodName($propertyKey)
     {
