@@ -13,5 +13,10 @@
             "email": "development@oguzhanuysal.eu"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Pbxg33k\\Traits\\": "src/"
+        }
+    },
     "require": {}
 }
