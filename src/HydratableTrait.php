@@ -161,11 +161,7 @@ trait HydratableTrait
      */
     private function checkObjectForErrors(&$object, $fix = false)
     {
-        if (!is_object($object)) {
-            throw new \Exception('Non-object passed');
-        } elseif ($object instanceof \DateTime) {
-            // The constructor (passed from the API) is NULL, indicating an empty value
-            // PHP DateTime's default value is now()
+        if ($object instanceof \DateTime) {
             if ($this->objectConstructorArguments == null) {
                 $object = null;
             } elseif (!$object->getTimestamp() && $fix) {
