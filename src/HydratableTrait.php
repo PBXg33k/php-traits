@@ -15,10 +15,14 @@ namespace Pbxg33k\Traits;
  * calling either of the following methods:
  *  - hydrateClass($rawData)
  *
+ * @author  Oguzhan Uysal <development@oguzhanuysal.eu>
  * @package Pbxg33k\Traits
  */
 trait HydratableTrait
 {
+    use PropertyTrait;
+    use ReflectionTrait;
+
     /**
      * List of types which are not used as objects
      *
@@ -110,89 +114,6 @@ trait HydratableTrait
         }
 
         return $this;
-    }
-
-    /**
-     * Sets the property value for the object
-     *
-     * @param string $key
-     * @param mixed $value
-     * @param bool $override
-     * @param bool $isCollection Boolean to indicate Doctrine Collections
-     * @return Object
-     * @throws \Exception if setting value has failed
-     */
-    private function setPropertyValue($key, $value, $override = false, $isCollection = false)
-    {
-        // Replace empty strings with null
-        if ($value === "") {
-            $value = null;
-        }
-
-        // Convert key to method names
-        $methodName = $this->getMethodName($key);
-
-        if (!$override && method_exists($this, 'get' . $methodName)) {
-            $currentValue = $this->{'get' . $methodName}();
-            if ($currentValue === $value) {
-                return $this;
-            }
-        }
-
-        $setMethod = ($isCollection) ? 'add' : 'set';
-        if (method_exists($this, $setMethod . $methodName)) {
-            return $this->{$setMethod . $methodName}($value);
-        } else {
-            throw new \Exception(sprintf(
-                'Unable to set value, method not found: %s%s in class: %s',
-                $setMethod,
-                $methodName,
-                static::class
-            ));
-        }
-    }
-
-    /**
-     * Converts snake_case to CamelCase to convert property names to getters
-     *
-     * @param  string $propertyKey
-     * @return string
-     */
-    private function getMethodName($propertyKey)
-    {
-        return ucfirst(preg_replace_callback('/_([a-z])/', function ($match) {
-            return strtoupper($match[1]);
-        }, $propertyKey));
-    }
-
-    /**
-     * Tries to get the correct class name from the given docBlock for Reflection
-     *
-     * @param string $comment the docblock
-     * @param bool $includeNamespaces
-     * @param null|\ReflectionClass $reflectionClass
-     *
-     * @return bool|string
-     */
-    private function getClassFromDocComment($comment, $includeNamespaces = true, $reflectionClass = null)
-    {
-        if (preg_match('~\@var[\s]+([A-Za-z0-9\\\\]+)~', $comment, $matches)) {
-            if ($includeNamespaces) {
-                if ($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], $this->nonObjectTypes)) {
-                    if($reflectionClass->getNamespaceName()) {
-                        return sprintf('\%s\%s', $reflectionClass->getNamespaceName(), $matches[1]);
-                    } else {
-                        return sprintf('\%s', $matches[1]);
-                    }
-                } else {
-                    return $matches[1];
-                }
-            } else {
-                return join('', array_slice(explode('\\', $matches[1]), -1));
-            }
-        }
-
-        return false;
     }
 
     /**
