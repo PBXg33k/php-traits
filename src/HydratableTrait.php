@@ -28,7 +28,7 @@ trait HydratableTrait
      *
      * @var array
      */
-    protected $nonObjectTypes = ['string', 'int', 'integer', 'bool', 'boolean', 'array', 'float', 'mixed', 'null'];
+    public static $nonObjectTypes = ['string', 'int', 'integer', 'bool', 'boolean', 'array', 'float', 'mixed', 'null'];
 
     /**
      * List of classes which will take string arguments in constructor
@@ -77,7 +77,7 @@ trait HydratableTrait
                 && $reflectionProperty = $reflection->getProperty($propertyName)
             ) {
                 // Get the expected property class from the property's DocBlock
-                if ($propertyClassName = $this->getClassFromDocComment($reflectionProperty->getDocComment(), true,
+                if ($propertyClassName = ReflectionTrait::getClassFromDocComment($reflectionProperty->getDocComment(), true,
                     $reflection)
                 ) {
 
@@ -85,7 +85,7 @@ trait HydratableTrait
                     $this->objectConstructorArguments = (in_array($propertyClassName, $this->giveDataInConstructor))
                         ? $itemValue : null;
 
-                    if (in_array($propertyClassName, $this->nonObjectTypes)) {
+                    if (in_array($propertyClassName, self::$nonObjectTypes)) {
                         $this->setPropertyValue($propertyName, $itemValue, true);
                     } elseif(interface_exists($propertyClassName)) {
                         // We cannot instantiate an interface, so we skip it
