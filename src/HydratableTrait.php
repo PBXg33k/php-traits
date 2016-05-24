@@ -87,7 +87,7 @@ trait HydratableTrait
 
                     if (in_array($propertyClassName, self::$nonObjectTypes)) {
                         $this->setPropertyValue($propertyName, $itemValue, true);
-                    } elseif(interface_exists($propertyClassName)) {
+                    } elseif (interface_exists($propertyClassName)) {
                         // We cannot instantiate an interface, so we skip it
                         continue;
                     } else {
