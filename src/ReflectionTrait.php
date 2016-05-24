@@ -11,6 +11,13 @@ namespace Pbxg33k\Traits;
  */
 trait ReflectionTrait
 {
+    /**
+     * Returns Class from the DockBlock above a property
+     * @param $class
+     * @param $property
+     *
+     * @throws \Exception
+     */
     public function getClassFromClassProperty($class, $property)
     {
         if(!class_exists($class)) {
