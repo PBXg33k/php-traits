@@ -13,11 +13,11 @@ trait ReflectionTrait
 {
     public function getClassFromClassProperty($class, $property)
     {
-        if(!class_exists($class)) {
-            throw new \Exception($class. ' not found or does not exist');
+        if (!class_exists($class)) {
+            throw new \Exception($class . ' not found or does not exist');
         }
         
-        if(!property_exists($class, $property)) {
+        if (!property_exists($class, $property)) {
             throw new \Exception($class . ' has no property with the name ' . $property);
         }
     }
@@ -36,7 +36,7 @@ trait ReflectionTrait
         if (preg_match('~\@var[\s]+([A-Za-z0-9\\\\]+)~', $comment, $matches)) {
             if ($includeNamespaces) {
                 if ($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], HydratableTrait::$nonObjectTypes)) {
-                    if($reflectionClass->getNamespaceName()) {
+                    if ($reflectionClass->getNamespaceName()) {
                         return sprintf('\%s\%s', $reflectionClass->getNamespaceName(), $matches[1]);
                     } else {
                         return sprintf('\%s', $matches[1]);
