@@ -86,7 +86,8 @@ trait HydratableTrait
         $propertyName = $this->resolvePropertyName($key);
 
         // Check if property exists and assign a ReflectionProperty class to $reflectionProperty
-        if (property_exists($this, $propertyName) && $reflectionProperty = $reflection->getProperty($propertyName)) {
+        if (property_exists($this, $propertyName)) {
+            $reflectionProperty = $reflection->getProperty($propertyName);
             // Get the expected property class from the property's DocBlock
             if ($propertyClassName = ReflectionTrait::getClassFromDocComment($reflectionProperty->getDocComment(), true, $reflection)) {
                 // Set argument for constructor (if any), in case we're dealing with an object (IE: DateTime)
