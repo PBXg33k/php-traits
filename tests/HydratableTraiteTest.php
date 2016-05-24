@@ -27,7 +27,7 @@ class HydratableTraiteTest extends PHPUnit_Framework_TestCase
     protected $testClass;
 
     protected $dateTimeClass;
-    
+
     protected $seed = [
         'publicProperty'            => self::VAL_PUBLIC_PROPERTY,
         'protectedProperty'         => self::VAL_PROTECTED_PROPERTY,
@@ -40,13 +40,18 @@ class HydratableTraiteTest extends PHPUnit_Framework_TestCase
         'classProperty'             => 'initialize_me',
         'dateTimeProperty'          => self::VAL_DATETIME_PROPERTY,
         'snake_case_property'       => self::VAL_SNAKE_PROPERTY,
+        'iterableProperty'          => [
+            'nonExistingClass'      => '',
+            'nonExistingProperty'   => '',
+            'date'                  => null,
+        ]
     ];
 
     public function setUp()
     {
         $this->testClass = new HydratableTraitStub;
         $this->seed['classProperty'] = new \stdClass();
-        
+
         $this->testClass->hydrateClass($this->seed);
     }
 

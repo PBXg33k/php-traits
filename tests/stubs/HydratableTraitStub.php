@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__.'/../../src/HydratableTrait.php');
+require_once(__DIR__.'/EmptyHydratable.php');
 
 /**
  * Created by PhpStorm.
@@ -70,6 +71,11 @@ class HydratableTraitStub
      * @var mixed
      */
     private $snake_case_property;
+
+    /**
+     * @var EmptyHydratable
+     */
+    private $iterableProperty;
 
     /**
      * @return mixed
@@ -295,6 +301,24 @@ class HydratableTraitStub
     public function setSnakeCaseProperty($snake_case_property)
     {
         $this->snake_case_property = $snake_case_property;
+
+        return $this;
+    }
+
+    /**
+     * @return HydratableTraitStub
+     */
+    public function getIterableProperty()
+    {
+        return $this->iterableProperty;
+    }
+
+    /**
+     * @param HydratableTraitStub $iterableProperty
+     */
+    public function setIterableProperty($iterableProperty)
+    {
+        $this->iterableProperty = $iterableProperty;
 
         return $this;
     }

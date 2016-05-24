@@ -104,7 +104,7 @@ trait HydratableTrait
                 $object = new $propertyClassName($this->objectConstructorArguments);
                 $this->checkObjectForErrors($object, true);
 
-                if (method_exists($value, 'hydrateClass') && $this->isHydratableValue($value)) {
+                if (method_exists($object, 'hydrateClass') && $this->isHydratableValue($value)) {
                     $object->hydrateClass($value);
                 }
                 $value = $object;
@@ -162,8 +162,6 @@ trait HydratableTrait
         if ($object instanceof \DateTime) {
             if ($this->objectConstructorArguments == null) {
                 $object = null;
-            } elseif (!$object->getTimestamp() && $fix) {
-                $object->setTimestamp(0);
             }
         }
     }

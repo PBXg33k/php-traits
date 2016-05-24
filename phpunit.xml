@@ -17,7 +17,6 @@
              highLowerBound="70"/>
         <log type="coverage-clover" target="logs/coverage.xml"/>
         <log type="coverage-php" target="logs/coverage.serialized"/>
-        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
         <log type="testdox-html" target="logs/testdox.html"/>
     </logging>
 </phpunit>
