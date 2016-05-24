@@ -32,18 +32,13 @@ trait PropertyTrait
     public function setPropertyValue($key, $value, $override = false, $isCollection = false)
     {
         // Replace empty strings with null
-        if ($value === "") {
-            $value = null;
-        }
+        $value = ($value === "") ? null : $value;
 
         // Convert key to method names
         $methodName = $this->getMethodName($key);
 
-        if (!$override && method_exists($this, 'get' . $methodName)) {
-            $currentValue = $this->{'get' . $methodName}();
-            if ($currentValue === $value) {
-                return $this;
-            }
+        if (!$override && $this->getPropertyValue($key) === $value) {
+            return $this;
         }
 
         $setMethod = ($isCollection) ? 'add' : 'set';
@@ -57,6 +52,20 @@ trait PropertyTrait
                 static::class
             ));
         }
+    }
+
+    /**
+     * Get property value
+     *
+     * @param $key
+     * @return mixed
+     */
+    public function getPropertyValue($key) {
+        $methodName = 'get' . $this->getMethodName($key);
+        if(method_exists($this, $methodName)) {
+            return $this->{$methodName}();
+        }
+        return false;
     }
 
     /**

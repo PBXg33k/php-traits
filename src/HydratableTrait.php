@@ -130,13 +130,8 @@ trait HydratableTrait
             // PHP DateTime's default value is now()
             if ($this->objectConstructorArguments == null) {
                 $object = null;
-            } else {
-                if (!$object->getTimestamp()) {
-                    // DateTime has a negative or false value
-                    if ($fix) {
-                        $object->setTimestamp(0);
-                    }
-                }
+            } elseif (!$object->getTimestamp() && $fix) {
+                $object->setTimestamp(0);
             }
         }
     }

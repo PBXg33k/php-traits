@@ -36,17 +36,11 @@ trait ReflectionTrait
         if (preg_match('~\@var[\s]+([A-Za-z0-9\\\\]+)~', $comment, $matches)) {
             if ($includeNamespaces) {
                 if ($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], HydratableTrait::$nonObjectTypes)) {
-                    if($reflectionClass->getNamespaceName()) {
-                        return sprintf('\%s\%s', $reflectionClass->getNamespaceName(), $matches[1]);
-                    } else {
-                        return sprintf('\%s', $matches[1]);
-                    }
-                } else {
-                    return $matches[1];
+                    return ($reflectionClass->getNamespaceName()) ? sprintf('\%s\%s', $reflectionClass->getNamespaceName(), $matches[1]) :  sprintf('\%s', $matches[1]);
                 }
-            } else {
-                return join('', array_slice(explode('\\', $matches[1]), -1));
+                return $matches[1];
             }
+            return join('', array_slice(explode('\\', $matches[1]), -1));
         }
 
         return false;
