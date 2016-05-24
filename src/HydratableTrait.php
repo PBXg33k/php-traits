@@ -64,8 +64,6 @@ trait HydratableTrait
 
         // Iterate over $class for properties
         foreach ($class as $itemKey => $itemValue) {
-            // Check if key exists in $this
-
             // Convert key to a propertyname in $this
             try {
                 $this->hydrateProperty($itemKey, $itemValue, $reflection);
@@ -73,7 +71,6 @@ trait HydratableTrait
                 if ($failOnError) {
                     throw $e;
                 }
-                continue;
             }
         }
 
@@ -103,13 +100,14 @@ trait HydratableTrait
             // Set argument for constructor (if any), in case we're dealing with an object (IE: DateTime)
             $this->objectConstructorArguments = (in_array($propertyClassName, $this->giveDataInConstructor)) ? $value : null;
 
-            if (!in_array($propertyClassName, self::$nonObjectTypes)) {
-                $value = new $propertyClassName($this->objectConstructorArguments);
-                $this->checkObjectForErrors($value, true);
+            if (!in_array($propertyClassName, self::$nonObjectTypes) && class_exists($propertyClassName)) {
+                $object = new $propertyClassName($this->objectConstructorArguments);
+                $this->checkObjectForErrors($object, true);
 
                 if (method_exists($value, 'hydrateClass') && $this->isHydratableValue($value)) {
-                    $value->hydrateClass($value);
+                    $object->hydrateClass($value);
                 }
+                $value = $object;
             }
 
             $this->setPropertyValue($propertyName, $value, true);
