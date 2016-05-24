@@ -51,11 +51,14 @@ trait HydratableTrait
      * For each key, it looks for a setter and type.
      * If the value is an object, it initializes the object and assignes the initialized object.
      *
-     * @param  object|array $class class
+     * @param  object|array $class       class
+     * @param  boolean      $failOnError Throw Exception if any error(s) occur
      *
      * @return object
+     *
+     * @throws \Exception if hydration failes AND $failOnError is true
      */
-    public function hydrateClass($class)
+    public function hydrateClass($class, $failOnError = false)
     {
         $reflection = new \ReflectionClass($this);
 
@@ -64,7 +67,14 @@ trait HydratableTrait
             // Check if key exists in $this
 
             // Convert key to a propertyname in $this
-            $this->hydrateProperty($itemKey, $itemValue, $reflection);
+            try {
+                $this->hydrateProperty($itemKey, $itemValue, $reflection);
+            } catch (\Exception $e) {
+                if ($failOnError) {
+                    throw $e;
+                }
+                continue;
+            }
         }
 
         return $this;
@@ -85,29 +95,26 @@ trait HydratableTrait
     {
         $propertyName = $this->resolvePropertyName($key);
 
-        // Check if property exists and assign a ReflectionProperty class to $reflectionProperty
-        if (property_exists($this, $propertyName)) {
+        try {
+            // Check if property exists and assign a ReflectionProperty class to $reflectionProperty
             $reflectionProperty = $reflection->getProperty($propertyName);
             // Get the expected property class from the property's DocBlock
-            if ($propertyClassName = ReflectionTrait::getClassFromDocComment($reflectionProperty->getDocComment(), true, $reflection)) {
-                // Set argument for constructor (if any), in case we're dealing with an object (IE: DateTime)
-                $this->objectConstructorArguments = (in_array($propertyClassName, $this->giveDataInConstructor)) ? $value : null;
+            $propertyClassName = ReflectionTrait::getClassFromDocComment($reflectionProperty->getDocComment(), true, $reflection);
+            // Set argument for constructor (if any), in case we're dealing with an object (IE: DateTime)
+            $this->objectConstructorArguments = (in_array($propertyClassName, $this->giveDataInConstructor)) ? $value : null;
 
-                if (!$this->isInstantiatable($propertyClassName)) {
-                    return;
+            if (!in_array($propertyClassName, self::$nonObjectTypes)) {
+                $value = new $propertyClassName($this->objectConstructorArguments);
+                $this->checkObjectForErrors($value, true);
+
+                if (method_exists($value, 'hydrateClass') && $this->isHydratableValue($value)) {
+                    $value->hydrateClass($value);
                 }
-
-                if (!in_array($propertyClassName, self::$nonObjectTypes)) {
-                    $value = new $propertyClassName($this->objectConstructorArguments);
-                    $this->checkObjectForErrors($value, true);
-
-                    if (method_exists($value, 'hydrateClass') && $this->isHydratableValue($value)) {
-                        $value->hydrateClass($value);
-                    }
-                }
-
-                $this->setPropertyValue($propertyName, $value, true);
             }
+
+            $this->setPropertyValue($propertyName, $value, true);
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -140,18 +147,6 @@ trait HydratableTrait
     private function isHydratableValue($value)
     {
         return (is_array($value) || is_object($value));
-    }
-
-    /**
-     * Checks if Classname resolved from docblock can be instantiated
-     *
-     * @param $className
-     *
-     * @return bool
-     */
-    private function isInstantiatable($className)
-    {
-        return (!interface_exists($className));
     }
 
     /**
