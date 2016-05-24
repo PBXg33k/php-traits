@@ -20,6 +20,13 @@ Or via the command line in the root of your project's installation.
 $ composer require "pbxg33k/pbxg33k-traits*"
 ```
 
+## Traits
+
+
+- **HydratableTrait** Allows you to easily hydrate classes from arrays. An example is importing data from external APIs 
+- **ReflectionTrait** Allows you to do extra things with Reflection (ie: get property class from @var block)
+- **PropertyTrait** Set property values without worrying about property visibility or setters
+
 ## Usage
 Click [here](http://php.net/manual/en/language.oop5.traits.php) to read about using traits on PHP's own manual.
 
@@ -29,11 +36,46 @@ class Foo
 {
     use Pbxg33k\Traits\HydratableTrait;
     // Rest of your class
+
+    // Example property, imagine it has proper getter/setter
+    protected $randomProperty;
 }
+
+// Somewhere else in code
+$foo = new Foo();
+$foo->hydrateClass(['randomProperty' => 'value']);
+
+var_dump($foo->getRandomProperty()); // "value"
 ```
 
 HydratableTrait trait allows you to hydrate your class properties easily by passing an array to hydrateClass().
 This trait will automagically assign matching keys to properties and instantiate supported classes.
+
+
+### ReflectionTrait ###
+```php
+Class Foo
+{
+    /**
+     * @var DateTime
+     */
+    property $dateTime;
+}
+
+Class BlackMagic
+{
+    use Pbxg33k\Traits\ReflectionTrait;
+
+    public static function getPropertyClass($class, $property)
+    {
+        // Wrapped following method because it's protected
+        return $this->getClassFromClassProperty($class, $property);
+    }
+}
+
+BlackMagic::getPropertyClass(Foo::class, 'dateTime'); // returns "DateTime"
+
+```
 
 ## Contributing
 
