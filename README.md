@@ -1,3 +1,5 @@
+[![Latest Stable Version](https://poser.pugx.org/pbxg33k/pbxg33k-traits/v/stable)](https://packagist.org/packages/pbxg33k/pbxg33k-traits) [![Total Downloads](https://poser.pugx.org/pbxg33k/pbxg33k-traits/downloads)](https://packagist.org/packages/pbxg33k/pbxg33k-traits) [![Latest Unstable Version](https://poser.pugx.org/pbxg33k/pbxg33k-traits/v/unstable)](https://packagist.org/packages/pbxg33k/pbxg33k-traits) [![License](https://poser.pugx.org/pbxg33k/pbxg33k-traits/license)](https://packagist.org/packages/pbxg33k/pbxg33k-traits) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/PBXg33k/php-traits/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/PBXg33k/php-traits/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/PBXg33k/php-traits/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/PBXg33k/php-traits/?branch=master)
+
 # PBXg33k's PHP Traits
 
 This repository is a collection of traits to make life with PHP easier
