@@ -44,4 +44,17 @@ class ArrayTraitTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($expectedOutput, $this->testClass->recusiveImplode($arr, ','));
     }
+
+    /**
+     * @test
+     */
+    public function joinIsAliasingImplode()
+    {
+        $arr = [
+            'testKey'  => 'testValue',
+            'testKey2' => 'testValue2'
+        ];
+
+        $this->assertSame(implode(',', $arr), $this->testClass->recursiveJoin($arr, ','));
+    }
 }
