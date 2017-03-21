@@ -12,6 +12,6 @@ matrix:
       before_script:
         - mkdir -p build/logs
       after_script:
-        - travis_retry php bin/coveralls -v
+        - travis_retry php vendor/bin/coveralls -v
     - php: 7.0
   fast_finish: true
