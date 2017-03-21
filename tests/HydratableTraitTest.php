@@ -1,13 +1,7 @@
 <?php
 require_once('stubs/HydratableTraitStub.php');
 
-/**
- * Created by PhpStorm.
- * User: PBX_g33k
- * Date: 24-May-16
- * Time: 00:31
- */
-class HydratableTraiteTest extends PHPUnit_Framework_TestCase
+class HydratableTraitTest extends PHPUnit_Framework_TestCase
 {
     const VAL_PUBLIC_PROPERTY       = 'public propety value';
     const VAL_PROTECTED_PROPERTY    = 'protected property value';
