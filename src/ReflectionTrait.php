@@ -47,7 +47,7 @@ trait ReflectionTrait
                 }
                 return $matches[1];
             }
-            return join('', array_slice(explode('\\', $matches[1]), -1));
+            return implode('', array_slice(explode('\\', $matches[1]), -1));
         }
 
         return false;
