@@ -55,29 +55,6 @@ This trait will automagically assign matching keys to properties and instantiate
 
 
 ### ReflectionTrait ###
-```php
-Class Foo
-{
-    /**
-     * @var DateTime
-     */
-    property $dateTime;
-}
-
-Class BlackMagic
-{
-    use Pbxg33k\Traits\ReflectionTrait;
-
-    public static function getPropertyClass($class, $property)
-    {
-        // Wrapped following method because it's protected
-        return $this->getClassFromClassProperty($class, $property);
-    }
-}
-
-BlackMagic::getPropertyClass(Foo::class, 'dateTime'); // returns "DateTime"
-
-```
 
 ## Contributing
 
