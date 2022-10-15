@@ -31,6 +31,11 @@ trait HydratableTrait
     public static $nonObjectTypes = ['string', 'int', 'integer', 'bool', 'boolean', 'array', 'float', 'mixed', 'null'];
 
     /**
+     * List of types to indicate arraycollection
+     */
+    public static $arrayCollectionInterfaces = ['Doctrine\Common\Collections\Collection'];
+
+    /**
      * List of classes which will take string arguments in constructor
      *
      * @var array
@@ -92,28 +97,59 @@ trait HydratableTrait
     {
         $propertyName = $this->resolvePropertyName($key);
 
-        try {
+//        try {
             // Check if property exists and assign a ReflectionProperty class to $reflectionProperty
             $reflectionProperty = $reflection->getProperty($propertyName);
+
             // Get the expected property class from the property's DocBlock
-            $propertyClassName = ReflectionTrait::getClassFromDocComment($reflectionProperty->getDocComment(), true, $reflection);
+            $propertyClassName = self::getClassFromDocComment($reflectionProperty->getDocComment(), true, $reflection) ?: $reflectionProperty->getType()?->getName();
             // Set argument for constructor (if any), in case we're dealing with an object (IE: DateTime)
             $this->objectConstructorArguments = (in_array($propertyClassName, $this->giveDataInConstructor)) ? $value : null;
 
-            if (!in_array($propertyClassName, self::$nonObjectTypes) && class_exists($propertyClassName)) {
-                $object = new $propertyClassName($this->objectConstructorArguments);
-                $this->checkObjectForErrors($object, true);
+            // Check if class implements or extends several classes that indicate we're working with ArrayCollectiones
+            if($propertyClassName && !$this->objectConstructorArguments && count(array_intersect(self::$arrayCollectionInterfaces, class_implements($propertyClassName))) && is_array($value)) {
+                $this->objectConstructorArguments = $value;
+            }
 
-                if (method_exists($object, 'hydrateClass') && $this->isHydratableValue($value)) {
+            if (!in_array($propertyClassName, self::$nonObjectTypes) && ($propertyClassName && class_exists($propertyClassName))) {
+                try {
+                    $rm = new \ReflectionMethod($propertyClassName, 'fromArray');
+                    $hasFromArray = true;
+                } catch (\Exception $exception)
+                {
+                    $hasFromArray = false;
+                }
+
+                if ($hasFromArray && $rm->isStatic() && is_array($value)) {
+                    $this->{$propertyName} = $propertyClassName::fromArray($value);
+                    return;
+//                } elseif (in_array(__CLASS__, class_uses($propertyClassName)) && $this->isHydratableValue($value)) {
+                }
+
+                if (method_exists($propertyClassName, 'hydrateClass') && $this->isHydratableValue($value)) {
+                    $object = new $propertyClassName($this->objectConstructorArguments);
+                    $this->checkObjectForErrors($object, true);
                     $object->hydrateClass($value);
+                } else {
+                    try {
+                        if (!$reflection->getConstructor()->getNumberOfRequiredParameters()) {
+                            $object = new $propertyClassName();
+                        } else {
+                            var_dump($propertyClassName, "AAAA");
+                            die();
+                        }
+                    } catch (\Error $error) {
+
+                    }
                 }
                 $value = $object;
             }
 
+            // Class implements an interface which allows us to use the add method
             $this->setPropertyValue($propertyName, $value, true);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+//        } catch (\Exception $e) {
+//            throw $e;
+//        }
     }
 
     /**

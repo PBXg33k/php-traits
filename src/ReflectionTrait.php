@@ -24,12 +24,12 @@ trait ReflectionTrait
     {
         if (preg_match('~\@var[\s]+([A-Za-z0-9\\\\]+)~', $comment, $matches)) {
             if ($includeNamespaces) {
-                if ($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], HydratableTrait::$nonObjectTypes)) {
+                if ($reflectionClass instanceof \ReflectionClass && !in_array($matches[1], self::$nonObjectTypes)) {
                     return ($reflectionClass->getNamespaceName()) ? sprintf('\%s\%s', $reflectionClass->getNamespaceName(), $matches[1]) :  sprintf('\%s', $matches[1]);
                 }
                 return $matches[1];
             }
-            return join('', array_slice(explode('\\', $matches[1]), -1));
+            return implode('', array_slice(explode('\\', $matches[1]), -1));
         }
 
         return false;
