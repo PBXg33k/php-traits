@@ -3,7 +3,7 @@
     "description": "A collection of traits to make life with PHP easier",
     "type": "library",
     "require-dev": {
-        "phpunit/phpunit": "^5.3",
+        "phpunit/phpunit": "^9",
         "crada/php-apidoc": "^1.3",
         "phpmd/phpmd": "^2.4",
         "satooshi/php-coveralls": "<1.0"
