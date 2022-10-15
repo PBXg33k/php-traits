@@ -1,14 +1,14 @@
 <?php
 require_once('stubs/HydratableTraitStub.php');
 
-class PropertyTraitTest extends \PHPUnit_Framework_TestCase
+class PropertyTraitTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \HydratableTraitStub
      */
     protected $testClass;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testClass = new HydratableTraitStub;
     }
@@ -30,6 +30,7 @@ class PropertyTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function willThrowExceptionIfNoSettersAreFound()
     {
+        $this->expectException(\Exception::class);
         $this->testClass->setPropertyValue('nonExistingProperty', 'test');
     }
 

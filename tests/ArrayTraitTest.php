@@ -3,14 +3,14 @@ use Pbxg33k\Traits\ArrayTrait;
 
 require_once('stubs/ArrayTraitClass.php');
 
-class ArrayTraitTest extends \PHPUnit_Framework_TestCase
+class ArrayTraitTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ArrayTraitClass
      */
     protected $testClass;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testClass = new ArrayTraitClass();
     }

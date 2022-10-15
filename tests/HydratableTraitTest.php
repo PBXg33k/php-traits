@@ -1,7 +1,7 @@
 <?php
 require_once('stubs/HydratableTraitStub.php');
 
-class HydratableTraitTest extends PHPUnit_Framework_TestCase
+class HydratableTraitTest extends \PHPUnit\Framework\TestCase
 {
     const VAL_PUBLIC_PROPERTY       = 'public propety value';
     const VAL_PROTECTED_PROPERTY    = 'protected property value';
@@ -41,7 +41,7 @@ class HydratableTraitTest extends PHPUnit_Framework_TestCase
         ]
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testClass = new HydratableTraitStub;
         $this->seed['classProperty'] = new \stdClass();

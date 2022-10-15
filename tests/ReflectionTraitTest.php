@@ -1,7 +1,7 @@
 <?php
 require_once('stubs/HydratableTraitStub.php');
 
-class ReflectionTraitTest extends \PHPUnit_Framework_TestCase
+class ReflectionTraitTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
